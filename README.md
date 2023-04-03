@@ -53,7 +53,7 @@ http://127.0.0.1:8000
 
     i.e. Instead of injecting the interface in the controller construst, the gateway class is injected instead. Allowing the controller to freely load the correct courier upon user input.
 
-    Affected files::
+    Affected files:
 
     ```
     [\app\Interfaces\CourierInterface.php]
@@ -70,7 +70,7 @@ http://127.0.0.1:8000
 
 -   Multiple generic courier operations have been implemented to work with any courier. Tested with Postman.
 
-    Affected files::
+    Affected files:
 
     ```
     [\app\Controllers\ApiCourierController.php]
@@ -79,7 +79,7 @@ http://127.0.0.1:8000
 
 -   Exposed the API as a web service using Laravel HTTP client, providing HTTP calls and retries.
 
-    Affected files::
+    Affected files:
 
     ```
     [\app\Controllers\WebCourierController.php]
