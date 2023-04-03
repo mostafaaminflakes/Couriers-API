@@ -28,7 +28,7 @@ API and web service are in the same application for simplicity. They are not sep
 Make sure to add the params as:
 
 ```
-courier_name -> any desired courier
+courier_name -> any supported courier [smsa, dhl, aramex, shipbox, ups]
 shipment_number -> any number
 ```
 
