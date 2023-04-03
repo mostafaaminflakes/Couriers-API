@@ -68,7 +68,7 @@ http://127.0.0.1:8000
     [\config\app.php] -> providers array
     ```
 
-    -   Multiple generic courier operations have been implemented to work with any courier. Tested with Postman.
+-   Multiple generic courier operations have been implemented to work with any courier. Tested with Postman.
 
     Files affected:
 
@@ -77,7 +77,7 @@ http://127.0.0.1:8000
     [\routes\api.php]
     ```
 
-    -   Exposed the API as a web service using Laravel HTTP client, providing HTTP calls and retries.
+-   Exposed the API as a web service using Laravel HTTP client, providing HTTP calls and retries.
 
     Files affected:
 
@@ -86,7 +86,7 @@ http://127.0.0.1:8000
     [\routes\web.php]
     ```
 
-    -   Implemented the real SMSA courier as a proof of concept.
+-   Implemented the real SMSA courier as a proof of concept.
 
     Files affected:
 
