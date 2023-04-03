@@ -13,8 +13,8 @@
 ```
 git clone https://github.com/mostafaaminflakes/Couriers-API.git
 cd Couriers-API
-composer install
 cp .env.example .env
+composer install
 php artisan key:generate
 ```
 
