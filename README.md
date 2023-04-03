@@ -100,4 +100,4 @@ http://127.0.0.1:8000
 
 -   During the SMSA testing, it was required to add a `Passkey` to authenticate. I couldn't get that `Passkey`. But the return values from SMSA were descriptive, meaning I'm a kind of on the right track.
 
-`Creating this project was so much fun!` :snowflake: :tada:
+:snowflake::tada: `Creating this project was so much fun!`
