@@ -2,7 +2,9 @@
 
 -   PHP 8.1
 -   Required PHP extensions:
+
     > soap
+
 -   Composer 2.5.\*
 -   Laravel Framework 10
 
@@ -21,7 +23,7 @@ API and web service are in the same application for simplicity. They are not sep
 -   First, run the web service: `php artisan serve --port=9000`
 -   Second, run the web interface: `php artisan serve --port=8000`
 
-### Postman:
+### Postman
 
 Make sure to add the params as:
 
@@ -38,7 +40,7 @@ http://127.0.0.1:9000/status
 http://127.0.0.1:9000/track
 ```
 
-Browser:
+### Browser
 
 ```
 http://127.0.0.1:8000
@@ -49,52 +51,52 @@ http://127.0.0.1:8000
 -   Repository pattern is used to separate the couriers logic. But a problem arises which is how to use the correct courier in the controller.
     I came up with a little tweak that adds a singleton wrapper class that acts as a gateway to register couriers and inject them into the service provider. Making them available everywhere in the application.
 
-i.e. Instead of injecting the interface in the controller construst, the gateway class is injected instead. Allowing the controller to freely load the correct courier upon user input.
+    i.e. Instead of injecting the interface in the controller construst, the gateway class is injected instead. Allowing the controller to freely load the correct courier upon user input.
 
-Files affected:
+    Files affected:
 
-```
-[\app\Interfaces\CourierInterface.php]
-[\app\Providers\RepositoriesProvider.php]
-[\app\Repositories\CourierGateway.php]
-[\app\Repositories\AramexRepository.php]
-[\app\Repositories\DhlRepository.php]
-[\app\Repositories\ShipboxRepository.php]
-[\app\Repositories\SmsaRepository.php]
-[\app\Repositories\UpsRepository.php]
-[\app\Repositories\UpsRepository.php]
-[\config\app.php] -> providers array
-```
+    ```
+    [\app\Interfaces\CourierInterface.php]
+    [\app\Providers\RepositoriesProvider.php]
+    [\app\Repositories\CourierGateway.php]
+    [\app\Repositories\AramexRepository.php]
+    [\app\Repositories\DhlRepository.php]
+    [\app\Repositories\ShipboxRepository.php]
+    [\app\Repositories\SmsaRepository.php]
+    [\app\Repositories\UpsRepository.php]
+    [\app\Repositories\UpsRepository.php]
+    [\config\app.php] -> providers array
+    ```
 
--   Multiple generic courier operations have been implemented to work with any courier. Tested with Postman.
+    -   Multiple generic courier operations have been implemented to work with any courier. Tested with Postman.
 
-Files affected:
+    Files affected:
 
-```
-[\app\Controllers\ApiCourierController.php]
-[\routes\api.php]
-```
+    ```
+    [\app\Controllers\ApiCourierController.php]
+    [\routes\api.php]
+    ```
 
--   Exposed the API as a web service using Laravel HTTP client, providing HTTP calls and retries.
+    -   Exposed the API as a web service using Laravel HTTP client, providing HTTP calls and retries.
 
-Files affected:
+    Files affected:
 
-```
-[\app\Controllers\WebCourierController.php]
-[\routes\web.php]
-```
+    ```
+    [\app\Controllers\WebCourierController.php]
+    [\routes\web.php]
+    ```
 
--   Implemented the real SMSA courier as a proof of concept.
+    -   Implemented the real SMSA courier as a proof of concept.
 
-Files affected:
+    Files affected:
 
-```
-[\app\Repositories\SmsaRepository.php]
-```
+    ```
+    [\app\Repositories\SmsaRepository.php]
+    ```
 
-I used [alhoqban smsa-webservice](https://github.com/alhoqbani/smsa-webservice) package to implement SMSA functionalities.
+    I used [alhoqban smsa-webservice](https://github.com/alhoqbani/smsa-webservice) package to implement SMSA functionalities.
 
-## Issues:
+## Issues
 
 -   During the SMSA testing, it was required to add a `Passkey` to authenticate. I couldn't get that `Passkey`. But the return values from SMSA were descriptive, meaning I'm a kind of on the right track.
 
