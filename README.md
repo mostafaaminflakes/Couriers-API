@@ -1,66 +1,101 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## System Requirements
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+-   PHP 8.1
+-   Required PHP extensions:
+    > soap
+-   Composer 2.5.\*
+-   Laravel Framework 10
 
-## About Laravel
+## Usage
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+```
+git clone https://github.com/mostafaaminflakes/Couriers-API.git
+cd Couriers-API
+composer install
+cp .env.example .env
+php artisan key:generate
+```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+API and web service are in the same application for simplicity. They are not separated. To use it correctly, you should do the following:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+-   First, run the web service: `php artisan serve --port=9000`
+-   Second, run the web interface: `php artisan serve --port=8000`
 
-## Learning Laravel
+### Postman:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Make sure to add the params as:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```
+courier_name -> any desired courier
+shipment_number -> any number
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```
+http://127.0.0.1:9000/courier_metadata
+http://127.0.0.1:9000/create
+http://127.0.0.1:9000/void
+http://127.0.0.1:9000/status
+http://127.0.0.1:9000/track
+```
 
-## Laravel Sponsors
+Browser:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+```
+http://127.0.0.1:8000
+```
 
-### Premium Partners
+## Architecture
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+-   Repository pattern is used to separate the couriers logic. But a problem arises which is how to use the correct courier in the controller.
+    I came up with a little tweak that adds a singleton wrapper class that acts as a gateway to register couriers and inject them into the service provider. Making them available everywhere in the application.
 
-## Contributing
+i.e. Instead of injecting the interface in the controller construst, the gateway class is injected instead. Allowing the controller to freely load the correct courier upon user input.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Files affected:
 
-## Code of Conduct
+```
+[\app\Interfaces\CourierInterface.php]
+[\app\Providers\RepositoriesProvider.php]
+[\app\Repositories\CourierGateway.php]
+[\app\Repositories\AramexRepository.php]
+[\app\Repositories\DhlRepository.php]
+[\app\Repositories\ShipboxRepository.php]
+[\app\Repositories\SmsaRepository.php]
+[\app\Repositories\UpsRepository.php]
+[\app\Repositories\UpsRepository.php]
+[\config\app.php] -> providers array
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+-   Multiple generic courier operations have been implemented to work with any courier. Tested with Postman.
 
-## Security Vulnerabilities
+Files affected:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```
+[\app\Controllers\ApiCourierController.php]
+[\routes\api.php]
+```
 
-## License
+-   Exposed the API as a web service using Laravel HTTP client, providing HTTP calls and retries.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Files affected:
+
+```
+[\app\Controllers\WebCourierController.php]
+[\routes\web.php]
+```
+
+-   Implemented the real SMSA courier as a proof of concept.
+
+Files affected:
+
+```
+[\app\Repositories\SmsaRepository.php]
+```
+
+I used [alhoqban smsa-webservice](https://github.com/alhoqbani/smsa-webservice) package to implement SMSA functionalities.
+
+## Issues:
+
+-   During the SMSA testing, it was required to add a `Passkey` to authenticate. I couldn't get that `Passkey`. But the return values from SMSA were descriptive, meaning I'm a kind of on the right track.
+
+It was very interesting creating this project!
